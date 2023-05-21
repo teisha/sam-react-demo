@@ -24,16 +24,30 @@
     "no-duplicate-imports": "error",
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
     "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
-    "indent": ["error", 4],
     "linebreak-style": ["error", "unix"],
-    "no-console": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { " vars": "all", "args": "after-used", "ignoreRestSiblings": false }
     ],
     "@typescript-eslint/explicit-function-return-type": "warn", // Consider using explicit annotations for object literals and function return types even when they can be inferred.
-    "no-empty": "warn"
+    "no-empty": "warn",
+    "curly": "error",
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1,
+        "offsetTernaryExpressions": true
+      }
+    ],
+    "semi": ["error", "always"],
+    "no-cond-assign": ["error", "always"],
+    "init-declarations": "off",
+    "no-console": "error",
+    "no-inline-comments": "off",
+    "eqeqeq": "warn",
+    "comma-dangle": "off"
   },
   "settings": {
     "import/resolver": {

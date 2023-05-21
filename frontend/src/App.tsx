@@ -1,25 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import { CssBaseline, LinearProgress } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import { deepPurple, teal } from '@mui/material/colors';
+import { RouterProvider } from 'react-router-dom';
 import './App.css';
+import AuthProvider from './Auth/contexts/authContext';
+import { AppContextProvider } from './contexts/appContext';
+import { router } from './routes/routes';
 
 function App() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: deepPurple[400],
+        light: deepPurple[200],
+        dark: deepPurple[800],
+        contrastText: '#000',
+      },
+      secondary: {
+        main: teal[500],
+        light: teal[300],
+        dark: teal[800],
+        contrastText: '#000',
+      },
+    },
+  });
+
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className='App-link'
-          href='https://reactjs.org'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppContextProvider>
+        <AuthProvider>
+          <RouterProvider router={router} fallbackElement={<LinearProgress />} />
+        </AuthProvider>
+      </AppContextProvider>
+    </ThemeProvider>
   );
 }
 

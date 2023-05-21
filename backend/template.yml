@@ -1,18 +1,18 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: "SAM template for school scheduling project to figure out schedules in the virtual space"
+Description: "SAM template for infrastructure to create serverless architecture"
 Parameters:
-  ProjectName: 
+  Application:
+    Description: What app is this for
+    Type: String
+    Default: "serverless"
+  ProjectName:
     Description: Name of the project, so I can see what these things are
     Type: String
-    Default: "virtual-schedules"
+    Default: "demo"
   Environment:
     Type: String
-    Description: Environment being deployed    
-  FrontEndUrl:
-    Type: String
-    Description: Front End URL for CORS
-
+    Description: Environment being deployed
 
 Globals:
   Function:
@@ -21,8 +21,6 @@ Globals:
     CodeUri: .
     Environment:
       Variables:
-        APP_URL: 
-          Ref: FrontEndUrl
         LOGGING_LEVEL: "INFO"
         DYNAMO_TABLE:
           Ref: DataTable
@@ -31,7 +29,7 @@ Resources:
     Type: "AWS::DynamoDB::Table"
     DeletionPolicy: Retain
     Properties:
-      TableName: !Sub ${ProjectName}-data-table  #Single table design - structures handled in code
+      TableName: !Sub ${ProjectName}-data-table #Single table design - structures handled in code
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
@@ -50,20 +48,20 @@ Resources:
       GlobalSecondaryIndexes:
         - IndexName: GSI1
           KeySchema:
-          - AttributeName: sk
-            KeyType: HASH
-          - AttributeName: pk
-            KeyType: RANGE
-          Projection: 
-            ProjectionType: ALL      
-        - IndexName: startIndex
-          KeySchema:
-            - AttributeName: start
+            - AttributeName: sk
               KeyType: HASH
             - AttributeName: pk
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        # - IndexName: startIndex
+        #   KeySchema:
+        #     - AttributeName: start
+        #       KeyType: HASH
+        #     - AttributeName: pk
+        #       KeyType: RANGE
+        #   Projection:
+        #     ProjectionType: ALL
 
   Api:
     Type: AWS::Serverless::Api
@@ -101,7 +99,7 @@ Resources:
           CognitoAuth:
             UserPoolArn: !GetAtt CognitoUserPool.Arn
         AddDefaultAuthorizerToCorsPreflight: False
- 
+
   GetSchedule:
     Type: "AWS::Serverless::Function"
     Properties:
@@ -150,22 +148,21 @@ Resources:
                           - DataTable
                           - Arn
                       - index
-                      - startIndex                   
-      Events:      
+                      - startIndex
+      Events:
         GetUser:
           Type: Api
           Properties:
             RestApiId: !Ref Api
             Path: "/users/{username}"
             Method: GET
-        PutUser:      
+        PutUser:
           #add or update user
           Type: Api
           Properties:
             RestApiId: !Ref Api
             Path: "/users/{username}"
             Method: PUT
-
 
   SchedulerApiHandler:
     Type: "AWS::Serverless::Function"
@@ -191,15 +188,15 @@ Resources:
                           - DataTable
                           - Arn
                       - index
-                      - startIndex                   
-      Events:      
+                      - startIndex
+      Events:
         GetDistricts:
           Type: Api
           Properties:
             RestApiId: !Ref Api
             Path: /scheduler
             Method: POST
-        GetDistrict:      
+        GetDistrict:
           # pass back school list and district schedule
           Type: Api
           Properties:
@@ -231,7 +228,6 @@ Resources:
             Path: "/scheduler/virtual"
             Method: POST
 
-       
   SchedulerApiPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -268,7 +264,7 @@ Resources:
         - email
         - openid
         - profile
-      CallbackURLs:  # Url Cognito will forward to after auth
+      CallbackURLs: # Url Cognito will forward to after auth
         - http://localhost:4000/auth.html
         - !Sub https://${ClientCloudFrontDistro.DomainName}/auth.html
       LogoutURLs:
@@ -278,7 +274,7 @@ Resources:
   CognitoDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: !Sub ${ProjectName} 
+      Domain: !Sub ${ProjectName}
       UserPoolId: !Ref CognitoUserPool
   ClientHostBucket:
     Type: "AWS::S3::Bucket"
@@ -371,4 +367,3 @@ Outputs:
   TableName:
     Description: The name of the table
     Value: !Ref DataTable
-
