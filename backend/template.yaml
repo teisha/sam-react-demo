@@ -73,6 +73,11 @@ Resources:
         AllowHeaders: "'Content-Type,Authorization'"
         AllowOrigin: "'*'"
       GatewayResponses:
+        BAD_REQUEST:
+          StatusCode: 401
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
         UNAUTHORIZED:
           StatusCode: 401
           ResponseParameters:
@@ -100,35 +105,35 @@ Resources:
             UserPoolArn: !GetAtt CognitoUserPool.Arn
         AddDefaultAuthorizerToCorsPreflight: False
 
-  GetSchedule:
-    Type: "AWS::Serverless::Function"
-    Properties:
-      Handler: get_schedule.handler
-      Runtime: nodejs18.x
-      Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Action:
-                - "dynamodb:Query"
-                - "dynamodb:GetItem"
-              Resource:
-                - "Fn::GetAtt":
-                    - DataTable
-                    - Arn
-                - "Fn::Join":
-                    - /
-                    - - "Fn::GetAtt":
-                          - DataTable
-                          - Arn
-                      - index
-                      - startIndex
+  # GetUserData:
+  #   Type: "AWS::Serverless::Function"
+  #   Properties:
+  #     Handler: index.getUserHandler
+  #     Runtime: nodejs18.x
+  #     Policies:
+  #       - Version: "2012-10-17"
+  #         Statement:
+  #           - Effect: Allow
+  #             Action:
+  #               - "dynamodb:Query"
+  #               - "dynamodb:GetItem"
+  #             Resource:
+  #               - "Fn::GetAtt":
+  #                   - DataTable
+  #                   - Arn
+  #               - "Fn::Join":
+  #                   - /
+  #                   - - "Fn::GetAtt":
+  #                         - DataTable
+  #                         - Arn
+  #                     - index
+  #                     - startIndex
 
   UserApiHandler:
     Type: "AWS::Serverless::Function"
     Properties:
       Handler: lambda_user_api.handler
-      Runtime: python3.8
+      Runtime: nodejs18.x
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -163,80 +168,6 @@ Resources:
             RestApiId: !Ref Api
             Path: "/users/{username}"
             Method: PUT
-
-  SchedulerApiHandler:
-    Type: "AWS::Serverless::Function"
-    Properties:
-      Handler: lambda_scheduler_api.handler
-      Runtime: python3.8
-      Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Action:
-                - "dynamodb:Query"
-                - "dynamodb:GetItem"
-                - "dynamodb:PutItem"
-                - "dynamodb:DeleteItem"
-              Resource:
-                - "Fn::GetAtt":
-                    - DataTable
-                    - Arn
-                - "Fn::Join":
-                    - /
-                    - - "Fn::GetAtt":
-                          - DataTable
-                          - Arn
-                      - index
-                      - startIndex
-      Events:
-        GetDistricts:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: /scheduler
-            Method: POST
-        GetDistrict:
-          # pass back school list and district schedule
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: "/scheduler/{districtId}"
-            Method: GET
-        PostDistrictSchool:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: "/scheduler/{districtId}/schools"
-            Method: POST
-        PutDistrictSchool:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: "/scheduler/{districtId}/schools"
-            Method: PUT
-        DeleteDistrictSchool:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: "/scheduler/{districtId}/schools/{schoolId}"
-            Method: DELETE
-        SaveVirtualSchedule:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: "/scheduler/virtual"
-            Method: POST
-
-  SchedulerApiPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: { "Fn::GetAtt": [SchedulerApiHandler, Arn] }
-      Action: "lambda:InvokeFunction"
-      Principal: connect.amazonaws.com
-      SourceAccount:
-        Ref: "AWS::AccountId"
-      SourceArn: !Sub "arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${ProjectName}-1.0"
 
   ###
   ###  Security

@@ -4,7 +4,8 @@
   "description": "An experiment to build a serverless React app using SAM",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "copyshared": "./scripts/copy_shared.sh",
+    "backend:deploydev": "npm run deploy:dev -w backend"
   },
   "workspaces": [
     "backend",

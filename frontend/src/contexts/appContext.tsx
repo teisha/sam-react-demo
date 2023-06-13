@@ -1,6 +1,6 @@
 import {createContext, useContext, useCallback,  useEffect,  useState } from 'react';
 import { EnvironmentService } from '../services/environmentService';
-import {  ApplicationAlert } from '../models/alerts';
+import { ApplicationAlert } from '../models/alerts';
 
 import { AlertColor } from '@mui/material';
 import MessagePopup from '../components/Alerts/MessagePopup';

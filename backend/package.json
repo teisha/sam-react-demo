@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node esbuild",
+    "deploy:dev": "./deploy-local.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.350.0",
+    "@aws-sdk/lib-dynamodb": "^3.350.0",
+    "@types/aws-lambda": "^8.10.117",
+    "amazon-cognito-identity-js": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.0",
+    "esbuild": "^0.18.2"
+  }
+}

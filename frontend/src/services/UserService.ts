@@ -1,5 +1,5 @@
-import IUser from '../../../../school_schedules/virtual-school/models/IUser';
-import HttpService from '../../../../school_schedules/virtual-school/services/HttpService';
+import IUser from '../shared/models/IUser';
+import HttpService from './HttpService';
 
 class UserService {
   httpService: HttpService;

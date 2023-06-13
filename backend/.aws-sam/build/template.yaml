@@ -1,0 +1,281 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for infrastructure to create serverless architecture
+Parameters:
+  Application:
+    Description: What app is this for
+    Type: String
+    Default: serverless
+  ProjectName:
+    Description: Name of the project, so I can see what these things are
+    Type: String
+    Default: demo
+  Environment:
+    Type: String
+    Description: Environment being deployed
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 1024
+    CodeUri: .
+    Environment:
+      Variables:
+        LOGGING_LEVEL: INFO
+        DYNAMO_TABLE:
+          Ref: DataTable
+Resources:
+  DataTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${ProjectName}-data-table
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+      - AttributeName: pk
+        AttributeType: S
+      - AttributeName: sk
+        AttributeType: S
+      - AttributeName: start
+        AttributeType: S
+      KeySchema:
+      - AttributeName: pk
+        KeyType: HASH
+      - AttributeName: sk
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+      - IndexName: GSI1
+        KeySchema:
+        - AttributeName: sk
+          KeyType: HASH
+        - AttributeName: pk
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: ProjectName
+      Cors:
+        AllowMethods: '''OPTIONS,POST,GET,PUT,DELETE'''
+        AllowHeaders: '''Content-Type,Authorization'''
+        AllowOrigin: '''*'''
+      GatewayResponses:
+        BAD_REQUEST:
+          StatusCode: 401
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: '''*'''
+        UNAUTHORIZED:
+          StatusCode: 401
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: '''*'''
+        ACCESS_DENIED:
+          StatusCode: 403
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: '''*'''
+        DEFAULT_5XX:
+          StatusCode: 500
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: '''*'''
+        RESOURCE_NOT_FOUND:
+          StatusCode: 404
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: '''*'''
+      Auth:
+        DefaultAuthorizer: CognitoAuth
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn:
+              Fn::GetAtt:
+              - CognitoUserPool
+              - Arn
+        AddDefaultAuthorizerToCorsPreflight: false
+  UserApiHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_user_api.handler
+      Runtime: nodejs18.x
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:Query
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:DeleteItem
+          Resource:
+          - Fn::GetAtt:
+            - DataTable
+            - Arn
+          - Fn::Join:
+            - /
+            - - Fn::GetAtt:
+                - DataTable
+                - Arn
+              - index
+              - startIndex
+      Events:
+        GetUser:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /users/{username}
+            Method: GET
+        PutUser:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /users/{username}
+            Method: PUT
+      CodeUri: UserApiHandler
+    Metadata:
+      SamResourceId: UserApiHandler
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      MfaConfiguration: 'OFF'
+      UserPoolName:
+        Fn::Sub: ${ProjectName}-user-pool
+  CognitoFrontEndClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName:
+        Fn::Sub: ${ProjectName}-client
+      GenerateSecret: false
+      UserPoolId:
+        Ref: CognitoUserPool
+      SupportedIdentityProviders:
+      - COGNITO
+      AllowedOAuthFlows:
+      - implicit
+      AllowedOAuthScopes:
+      - email
+      - openid
+      - profile
+      CallbackURLs:
+      - http://localhost:4000/auth.html
+      - Fn::Sub: https://${ClientCloudFrontDistro.DomainName}/auth.html
+      LogoutURLs:
+      - http://localhost:4000/
+      - Fn::Sub: https://${ClientCloudFrontDistro.DomainName}
+      AllowedOAuthFlowsUserPoolClient: true
+  CognitoDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain:
+        Fn::Sub: ${ProjectName}
+      UserPoolId:
+        Ref: CognitoUserPool
+  ClientHostBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: ${ProjectName}-host-bucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+  ClientBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ClientHostBucket
+      PolicyDocument:
+        Statement:
+        - Action:
+          - s3:GetObject
+          Effect: Allow
+          Resource:
+            Fn::Join:
+            - ''
+            - - 'arn:aws:s3:::'
+              - Ref: ClientHostBucket
+              - /*
+          Principal:
+            AWS:
+              Fn::Join:
+              - ''
+              - - 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity '
+                - Ref: ClientOID
+  ClientCloudFrontDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        CustomErrorResponses:
+        - ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        - ErrorCode: 403
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: 'true'
+          TargetOriginId:
+            Fn::Sub: ${ProjectName}-origin-dist
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: 'true'
+        Origins:
+        - DomainName:
+            Fn::Join:
+            - ''
+            - - Ref: ClientHostBucket
+              - .s3
+              - .amazonaws.com
+          Id:
+            Fn::Sub: ${ProjectName}-origin-dist
+          S3OriginConfig:
+            OriginAccessIdentity:
+              Fn::Join:
+              - ''
+              - - origin-access-identity/cloudfront/
+                - Ref: ClientOID
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: 'true'
+  ClientOID:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Origin Access ID for front end
+Outputs:
+  CogntioRedirectUri:
+    Description: Redirect URI to front end from Cognito User Pool
+    Value:
+      Fn::Sub: https://${ClientCloudFrontDistro.DomainName}/auth
+  CognitoClientId:
+    Description: Cognito client ID
+    Value:
+      Ref: CognitoFrontEndClient
+  CognitoDomain:
+    Description: Cogntio Domain
+    Value:
+      Fn::Sub: ${ProjectName}
+  BackendUrl:
+    Description: API Gateway backend URL
+    Value:
+      Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${ProjectName}/
+  HostBucket:
+    Description: S3 bucket created to hold frontend.
+    Value:
+      Ref: ClientHostBucket
+  CognitoDistributionId:
+    Description: The ID of the Cloudfront Distribution used to invalidate front end
+      after deploy
+    Value:
+      Ref: ClientCloudFrontDistro
+  TableName:
+    Description: The name of the table
+    Value:
+      Ref: DataTable

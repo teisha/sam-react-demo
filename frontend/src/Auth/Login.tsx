@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../contexts/appContext';
 import { useAuthContext } from './contexts/authContext';
@@ -9,18 +8,17 @@ import { CognitoService } from './services/CognitoService';
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getLogger } from '../services/loggingService';
-import { UserService } from '../services/userService';
+import UserService from '../services/UserService';
 import IAuthToken from './models/IAuthToken';
 import LoginIcon from '@mui/icons-material/Login';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
-// import UserService from "../services/user.service";
 
 const Login = () => {
   console.log('Login through Cognito');
   const navigate = useNavigate();
   const appContext = useAppContext();
   const context = useAuthContext();
-  const logger = getLogger("Login", appContext.config.logLevel);
+  const logger = getLogger('Login', appContext.config.logLevel);
   const cognito = new CognitoService(
     appContext.config.logLevel,
     appContext.config.cognitoConfig.cognito_client_id,
@@ -34,22 +32,22 @@ const Login = () => {
   const [error, setError] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState<IUser | null>(null);
 
-  console.log("LOGIN PAGE", appContext.config);
+  console.log('LOGIN PAGE', appContext.config);
 
   const handleSubmit = async (e: any): Promise<void> => {
     try {
       const url = cognito.getRedirectToSignInUrl(appContext.config.cognitoConfig);
-      logger.debug("Go to URL:: " + url)
+      logger.debug('Go to URL:: ' + url);
       window.location.href = url;
     } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        }
+      if (err instanceof Error) {
+        setError(err.message);
+      }
     }
   };
 
   const goHome = () => {
-    navigate('/index', {replace: true});
+    navigate('/index', { replace: true });
   };
 
   useEffect(() => {
@@ -61,7 +59,7 @@ const Login = () => {
 
       (async function () {
         console.log('CALL CONTEXT - SET TOKEN TO GLOBALSTATE');
-        context.login(cognito.getAuthToken()!);    
+        context.login(cognito.getAuthToken()!);
         console.log(`After context: ${JSON.stringify(context.token)}`);
       })();
       console.log(`Check login: ${JSON.stringify(token)}`);
@@ -70,15 +68,15 @@ const Login = () => {
 
   useEffect(() => {
     (async function () {
-      if (context.isLoggedIn ) {
+      if (context.isLoggedIn) {
         const token: IAuthToken = context.token!;
         const username = token.cognito_username;
 
         console.log('TOKEN IS VALID; GETTING USER INFO FOR ' + username);
-        let user: IUser =  {} as IUser;
+        let user: IUser = {} as IUser;
         try {
           const userService: UserService = new UserService(appContext.config.backendUrl);
-          user = await userService.getUserData(username || "", token.rawtoken, );
+          user = await userService.getUserData(username || '', token.rawtoken);
           console.log(`SET CONTEXT USER: ${JSON.stringify(user)}`);
           await context.setUserContext(user);
           setUserLoggedIn(user);
@@ -86,7 +84,7 @@ const Login = () => {
           console.error('Could not set user');
           console.error(error);
         }
-        navigate(context.redirectOnLogin,  {replace: true});
+        navigate(context.redirectOnLogin, { replace: true });
       }
       console.log(`Check login state: ${JSON.stringify(context.token)}`);
     })();

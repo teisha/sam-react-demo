@@ -6,7 +6,7 @@ import { CognitoService } from './services/CognitoService';
 import { useAuthContext } from './contexts/authContext';
 
 import { useNavigate } from 'react-router-dom';
-import { UserService } from '../services/userService';
+import  UserService  from '../services/UserService';
 import IUser from '../shared/models/IUser';
 import { defaultUrl } from './models/IAuth';
 import { useAppContext } from '../contexts/appContext';

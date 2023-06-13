@@ -3,8 +3,8 @@ import {
   CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
-} from "amazon-cognito-identity-js";
-import { Env } from "./environment.service";
+} from 'amazon-cognito-identity-js';
+import { Env } from './environment.service';
 
 const userPoolId = Env.userPoolId;
 const clientId = Env.clientId;
@@ -53,15 +53,11 @@ export async function getSession() {
   });
 }
 
-export async function signUpUserWithEmail(
-  username: string,
-  email: string,
-  password: string
-) {
+export async function signUpUserWithEmail(username: string, email: string, password: string) {
   return new Promise(function (resolve, reject) {
     const attributeList = [
       new CognitoUserAttribute({
-        Name: "email",
+        Name: 'email',
         Value: email,
       }),
     ];
@@ -139,7 +135,7 @@ export async function getAttributes() {
 
 export async function setAttribute(attribute: any) {
   return new Promise(function (resolve, reject) {
-    const attributeList = [] as Array<CognitoUserAttribute>;
+    const attributeList = [];
     const res = new CognitoUserAttribute(attribute);
     attributeList.push(res);
 
@@ -177,11 +173,7 @@ export async function sendCode(username: string) {
   });
 }
 
-export async function forgotPassword(
-  username: string,
-  code: string,
-  password: string
-) {
+export async function forgotPassword(username: string, code: string, password: string) {
   return new Promise(function (resolve, reject) {
     const cognitoUser = getCognitoUser(username);
 
@@ -192,7 +184,7 @@ export async function forgotPassword(
 
     cognitoUser.confirmPassword(code, password, {
       onSuccess: function () {
-        resolve("password updated");
+        resolve('password updated');
       },
       onFailure: function (err) {
         reject(err);
@@ -203,16 +195,12 @@ export async function forgotPassword(
 
 export async function changePassword(oldPassword: string, newPassword: string) {
   return new Promise(function (resolve, reject) {
-    currentUser.changePassword(
-      oldPassword,
-      newPassword,
-      function (err: any, res: any) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
+    currentUser.changePassword(oldPassword, newPassword, function (err: any, res: any) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
       }
-    );
+    });
   });
 }

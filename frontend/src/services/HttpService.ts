@@ -1,8 +1,9 @@
-import Router from 'next/router';
+import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { useContext } from 'react';
-import authContext from '../context/auth-context';
-import IAuthToken from '../models/IAuthToken';
-import IUser from '../models/IUser';
+import authContext from '../Auth/contexts/authContext';
+import IAuthToken from '../Auth/models/IAuthToken';
+import IUser from '../shared/models/IUser';
 import axiosInstance from '../utils/axiosInstance';
 
 interface IGetParams {
@@ -11,6 +12,21 @@ interface IGetParams {
 }
 
 class HttpService {
+  private handleError(error: unknown) {
+    const navigate = useNavigate();
+    console.error(JSON.stringify(error));
+
+    let errorMessage = (error as unknown as Error).message;
+    if ((error as unknown as AxiosError).response) {
+      const err = error as unknown as AxiosError;
+      if (err.response && err.response.status === 401) {
+        navigate('/login?redirected=true');
+      }
+      errorMessage += err.response?.statusText;
+    }
+    return Promise.reject(new Error(errorMessage));
+  }
+
   async get(params: IGetParams, username: string, rawtoken: string): Promise<any> {
     if (!username || !rawtoken) {
       throw new Error('Cannot call backend API');
@@ -25,12 +41,7 @@ class HttpService {
       return response.data;
     } catch (error) {
       console.error(`Failed to retrieve ${params.objectName} for ${app_user}`);
-      console.error((error as unknown as Error).message);
-      console.error(JSON.stringify(error));
-      if (error?.response && error.response.status === 401) {
-        Router.push('/login?redirected=true');
-      }
-      return Promise.reject(new Error(error.response || error.message));
+      return this.handleError(error);
     }
   }
 
@@ -55,11 +66,7 @@ class HttpService {
       return response.data;
     } catch (error) {
       console.error(`${username}:: Failed to post ${JSON.stringify(queryData)} to ${url}`);
-      console.error(JSON.stringify(error));
-      if (error.response && error.response.status === 401) {
-        Router.push('/login?redirected=true');
-      }
-      return Promise.reject(new Error(error.response || error.message));
+      return this.handleError(error);
     }
   }
 }
