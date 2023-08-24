@@ -29,7 +29,7 @@ Resources:
     Type: "AWS::DynamoDB::Table"
     DeletionPolicy: Retain
     Properties:
-      TableName: !Sub ${ProjectName}-data-table #Single table design - structures handled in code
+      TableName: !Sub ${Application}-${ProjectName}-${Environment}-data #Single table design - structures handled in code
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
@@ -67,7 +67,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName:
-        Ref: ProjectName
+        Ref: Environment
       Cors:
         AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
         AllowHeaders: "'Content-Type,Authorization'"
@@ -179,11 +179,11 @@ Resources:
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: true
       MfaConfiguration: "OFF"
-      UserPoolName: !Sub ${ProjectName}-user-pool
+      UserPoolName: !Sub ${Application}-${ProjectName}-${Environment}-user-pool
   CognitoFrontEndClient:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: !Sub ${ProjectName}-client
+      ClientName: !Sub ${Application}-${ProjectName}-${Environment}-client
       GenerateSecret: false
       UserPoolId:
         Ref: CognitoUserPool
@@ -205,7 +205,7 @@ Resources:
   CognitoDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: !Sub ${ProjectName}
+      Domain: !Sub ${Application}-${ProjectName}-${Environment}
       UserPoolId: !Ref CognitoUserPool
   ClientHostBucket:
     Type: "AWS::S3::Bucket"
@@ -249,7 +249,7 @@ Resources:
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: "true"
-          TargetOriginId: !Sub ${ProjectName}-origin-dist
+          TargetOriginId: !Sub ${Application}-${ProjectName}-${Environment}-origin-dist
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: "true"
@@ -260,7 +260,7 @@ Resources:
                 - - Ref: ClientHostBucket
                   - ".s3"
                   - ".amazonaws.com"
-            Id: !Sub ${ProjectName}-origin-dist
+            Id: !Sub ${Application}-${ProjectName}-${Environment}-origin-dist
             S3OriginConfig:
               OriginAccessIdentity:
                 Fn::Join:

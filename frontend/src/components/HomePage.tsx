@@ -1,5 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 import withAuth, { AuthProps } from "../Auth/hoc/withAuth";
+import React from 'react';
 
 
 

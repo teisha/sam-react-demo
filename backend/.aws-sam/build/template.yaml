@@ -29,7 +29,7 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       TableName:
-        Fn::Sub: ${ProjectName}-data-table
+        Fn::Sub: ${Application}-${ProjectName}-${Environment}-data
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
@@ -56,7 +56,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName:
-        Ref: ProjectName
+        Ref: Environment
       Cors:
         AllowMethods: '''OPTIONS,POST,GET,PUT,DELETE'''
         AllowHeaders: '''Content-Type,Authorization'''
@@ -146,12 +146,12 @@ Resources:
         AllowAdminCreateUserOnly: true
       MfaConfiguration: 'OFF'
       UserPoolName:
-        Fn::Sub: ${ProjectName}-user-pool
+        Fn::Sub: ${Application}-${ProjectName}-${Environment}-user-pool
   CognitoFrontEndClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName:
-        Fn::Sub: ${ProjectName}-client
+        Fn::Sub: ${Application}-${ProjectName}-${Environment}-client
       GenerateSecret: false
       UserPoolId:
         Ref: CognitoUserPool
@@ -174,7 +174,7 @@ Resources:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
       Domain:
-        Fn::Sub: ${ProjectName}
+        Fn::Sub: ${Application}-${ProjectName}-${Environment}
       UserPoolId:
         Ref: CognitoUserPool
   ClientHostBucket:
@@ -219,7 +219,7 @@ Resources:
           ForwardedValues:
             QueryString: 'true'
           TargetOriginId:
-            Fn::Sub: ${ProjectName}-origin-dist
+            Fn::Sub: ${Application}-${ProjectName}-${Environment}-origin-dist
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: 'true'
@@ -231,7 +231,7 @@ Resources:
               - .s3
               - .amazonaws.com
           Id:
-            Fn::Sub: ${ProjectName}-origin-dist
+            Fn::Sub: ${Application}-${ProjectName}-${Environment}-origin-dist
           S3OriginConfig:
             OriginAccessIdentity:
               Fn::Join:

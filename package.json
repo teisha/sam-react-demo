@@ -4,8 +4,11 @@
   "description": "An experiment to build a serverless React app using SAM",
   "main": "index.js",
   "scripts": {
+    "install:all": "npm install --workspaces",
     "copyshared": "./scripts/copy_shared.sh",
-    "backend:deploydev": "npm run deploy:dev -w backend"
+    "backend:deploydev": "npm run deploy:dev -w backend",
+    "frontend:builddev": "npm run build:dev -w frontend",
+    "deploy:dev": "npm run copyshared && npm run frontend:builddev && npm run backend:deploydev"
   },
   "workspaces": [
     "backend",

@@ -12,6 +12,7 @@ import UserService from '../services/UserService';
 import IAuthToken from './models/IAuthToken';
 import LoginIcon from '@mui/icons-material/Login';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
+import React from 'react';
 
 const Login = () => {
   console.log('Login through Cognito');
@@ -75,7 +76,7 @@ const Login = () => {
         console.log('TOKEN IS VALID; GETTING USER INFO FOR ' + username);
         let user: IUser = {} as IUser;
         try {
-          const userService: UserService = new UserService(appContext.config.backendUrl);
+          const userService: UserService = new UserService(); //appContext.config.backendUrl);
           user = await userService.getUserData(username || '', token.rawtoken);
           console.log(`SET CONTEXT USER: ${JSON.stringify(user)}`);
           await context.setUserContext(user);

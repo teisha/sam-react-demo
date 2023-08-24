@@ -10,10 +10,10 @@ export default interface IAuthToken {
 
 //   "auth_time": 1606507750,
 //   "iss": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_89k06lCSA",
-//   "cognito:username": "laimaB",
+//   "cognito:username": "ahsiet",
 //   "exp": 1606511350,
 //   "iat": 1606507750,
-//   "email": "ahsiet4@yahoo.com"
+//   "email": "ahsiet@yahoo.com"
 
 export interface ICognitoToken {
   at_hash: string;

@@ -1,5 +1,6 @@
 import { Alert, Slide, Snackbar } from '@mui/material';
 import { ApplicationAlert } from '../../models/alerts';
+import React from 'react';
 
 interface IProps {
   alert: ApplicationAlert;

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import {Link} from "react-router-dom"
+import React from 'react';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { AppBar, Container, MenuItem, Toolbar } from '@mui/material';
 import { useAuthContext } from '../../Auth/contexts/authContext';
