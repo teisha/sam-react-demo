@@ -37,8 +37,6 @@ Resources:
         AttributeType: S
       - AttributeName: sk
         AttributeType: S
-      - AttributeName: start
-        AttributeType: S
       KeySchema:
       - AttributeName: pk
         KeyType: HASH
@@ -182,8 +180,6 @@ Resources:
   ClientHostBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName:
-        Fn::Sub: ${ProjectName}-host-bucket
       WebsiteConfiguration:
         IndexDocument: index.html
   ClientBucketPolicy:

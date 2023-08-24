@@ -40,7 +40,7 @@ sam build --template $TEMPLATE \
     "Environment"=$ENVIRONMENT \
   --parameter-overrides \
     ParameterKey=Application,ParameterValue=$APPLICATION \
-    ParameterKey=Project,ParameterValue=$PROJECT \
+    ParameterKey=Project,ParameterValue=$STACK_NAME \
     ParameterKey=Environment,ParameterValue=$ENVIRONMENT \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
   --region $REGION \
