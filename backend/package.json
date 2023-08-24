@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "node esbuild",
-    "deploy:dev": "./deploy-dev.sh"
+    "deploy:dev": "./scripts/deploy-dev.sh",
+    "deploy:dev:frontend": "./scripts/deploy-react.sh lsoft us-east-1 serverless-react-dev"
   },
   "keywords": [],
   "author": "",

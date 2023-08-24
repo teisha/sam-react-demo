@@ -29,7 +29,7 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       TableName:
-        Fn::Sub: ${Application}-${ProjectName}-${Environment}-data
+        Fn::Sub: ${ProjectName}-data
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
@@ -56,13 +56,13 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName:
-        Ref: Environment
+        Ref: ProjectName
       Cors:
         AllowMethods: '''OPTIONS,POST,GET,PUT,DELETE'''
         AllowHeaders: '''Content-Type,Authorization'''
         AllowOrigin: '''*'''
       GatewayResponses:
-        BAD_REQUEST:
+        MISSING_AUTHENTICATION_TOKEN:
           StatusCode: 401
           ResponseParameters:
             Headers:
@@ -146,12 +146,12 @@ Resources:
         AllowAdminCreateUserOnly: true
       MfaConfiguration: 'OFF'
       UserPoolName:
-        Fn::Sub: ${Application}-${ProjectName}-${Environment}-user-pool
+        Fn::Sub: ${ProjectName}-user-pool
   CognitoFrontEndClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName:
-        Fn::Sub: ${Application}-${ProjectName}-${Environment}-client
+        Fn::Sub: ${ProjectName}-client
       GenerateSecret: false
       UserPoolId:
         Ref: CognitoUserPool
@@ -174,7 +174,7 @@ Resources:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
       Domain:
-        Fn::Sub: ${Application}-${ProjectName}-${Environment}
+        Fn::Sub: ${ProjectName}
       UserPoolId:
         Ref: CognitoUserPool
   ClientHostBucket:
@@ -219,7 +219,7 @@ Resources:
           ForwardedValues:
             QueryString: 'true'
           TargetOriginId:
-            Fn::Sub: ${Application}-${ProjectName}-${Environment}-origin-dist
+            Fn::Sub: ${ProjectName}-origin-dist
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: 'true'
@@ -231,7 +231,7 @@ Resources:
               - .s3
               - .amazonaws.com
           Id:
-            Fn::Sub: ${Application}-${ProjectName}-${Environment}-origin-dist
+            Fn::Sub: ${ProjectName}-origin-dist
           S3OriginConfig:
             OriginAccessIdentity:
               Fn::Join:

@@ -38,7 +38,7 @@ sam build --template $TEMPLATE \
     "Environment"=$ENVIRONMENT \
   --parameter-overrides \
     ParameterKey=Application,ParameterValue=$APPLICATION \
-    ParameterKey=Project,ParameterValue=$STACK_NAME \
+    ParameterKey=ProjectName,ParameterValue=$STACK_NAME \
     ParameterKey=Environment,ParameterValue=$ENVIRONMENT \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
   --region $REGION \
@@ -60,17 +60,18 @@ sam build --template $TEMPLATE \
 #   FrontEndUrl=${APP_URL} --profile ${PROFILE}
 
 
-outputs=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --output json --query 'Stacks[0].Outputs')
-echo $outputs > './outputs.json'
-echo $outputs
+./scripts/deploy-react.sh $PROFILE $REGION $STACK_NAME
+# outputs=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --output json --query 'Stacks[0].Outputs')
+# echo $outputs > './outputs.json'
+# echo $outputs
 
-distributionid=$( cat ./outputs.json | jq -r 'map(select(.OutputKey == "CognitoDistributionId"))[0] | "\(.OutputValue)"' )
-hostBucket=$( cat ./outputs.json | jq -r 'map(select(.OutputKey == "HostBucket"))[0] | "\(.OutputValue)"' )
-echo "DistributionID - ${distributionid}"
-echo "Host Bucket - ${hostBucket}"
+# distributionid=$( cat ./outputs.json | jq -r 'map(select(.OutputKey == "CognitoDistributionId"))[0] | "\(.OutputValue)"' )
+# hostBucket=$( cat ./outputs.json | jq -r 'map(select(.OutputKey == "HostBucket"))[0] | "\(.OutputValue)"' )
+# echo "DistributionID - ${distributionid}"
+# echo "Host Bucket - ${hostBucket}"
 
-aws s3 sync ./out s3://${hostBucket} --delete --profile $PROFILE --region $REGION
-aws cloudfront create-invalidation --distribution-id ${distributionid} --paths / --profile $PROFILE --region $REGION
+# aws s3 sync ../frontend/dist s3://${hostBucket} --delete --profile $PROFILE --region $REGION
+# aws cloudfront create-invalidation --distribution-id ${distributionid} --paths / --profile $PROFILE --region $REGION
 
 
 echo "completed"

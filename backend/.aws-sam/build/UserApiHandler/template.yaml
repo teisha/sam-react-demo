@@ -29,7 +29,7 @@ Resources:
     Type: "AWS::DynamoDB::Table"
     DeletionPolicy: Retain
     Properties:
-      TableName: !Sub ${Application}-${ProjectName}-${Environment}-data #Single table design - structures handled in code
+      TableName: !Sub ${ProjectName}-data #Single table design - structures handled in code
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
@@ -67,13 +67,13 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName:
-        Ref: Environment
+        Ref: ProjectName
       Cors:
         AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
         AllowHeaders: "'Content-Type,Authorization'"
         AllowOrigin: "'*'"
       GatewayResponses:
-        BAD_REQUEST:
+        MISSING_AUTHENTICATION_TOKEN:
           StatusCode: 401
           ResponseParameters:
             Headers:
@@ -98,6 +98,7 @@ Resources:
           ResponseParameters:
             Headers:
               Access-Control-Allow-Origin: "'*'"
+
       Auth:
         DefaultAuthorizer: CognitoAuth
         Authorizers:
@@ -179,11 +180,11 @@ Resources:
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: true
       MfaConfiguration: "OFF"
-      UserPoolName: !Sub ${Application}-${ProjectName}-${Environment}-user-pool
+      UserPoolName: !Sub ${ProjectName}-user-pool
   CognitoFrontEndClient:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: !Sub ${Application}-${ProjectName}-${Environment}-client
+      ClientName: !Sub ${ProjectName}-client
       GenerateSecret: false
       UserPoolId:
         Ref: CognitoUserPool
@@ -205,7 +206,7 @@ Resources:
   CognitoDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: !Sub ${Application}-${ProjectName}-${Environment}
+      Domain: !Sub ${ProjectName}
       UserPoolId: !Ref CognitoUserPool
   ClientHostBucket:
     Type: "AWS::S3::Bucket"
@@ -249,7 +250,7 @@ Resources:
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: "true"
-          TargetOriginId: !Sub ${Application}-${ProjectName}-${Environment}-origin-dist
+          TargetOriginId: !Sub ${ProjectName}-origin-dist
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: "true"
@@ -260,7 +261,7 @@ Resources:
                 - - Ref: ClientHostBucket
                   - ".s3"
                   - ".amazonaws.com"
-            Id: !Sub ${Application}-${ProjectName}-${Environment}-origin-dist
+            Id: !Sub ${ProjectName}-origin-dist
             S3OriginConfig:
               OriginAccessIdentity:
                 Fn::Join:
@@ -274,6 +275,7 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: "Origin Access ID for front end"
+
 
 Outputs:
   CogntioRedirectUri:

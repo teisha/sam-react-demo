@@ -1,10 +1,10 @@
 {
     "log_level": "DEBUG",
-    "api_url": "https://br6dj6xbd8.execute-api.us-east-1.amazonaws.com/dev/",
+    "api_url": "https://6tlwfoclq0.execute-api.us-east-1.amazonaws.com/serverless-react-dev/",
     "cognito_config": {
-        "cognito_client_id": "33l5klqn2i9bs3ifq51igm860a",
-        "cognito_domain": "mailsorterdev",
-        "cognito_redirect_url": "https://d210rop3vckvny.cloudfront.net/auth",
+        "cognito_client_id": "5q86jh14q9l5rnheljlq5061tn",
+        "cognito_domain": "serverless-react-dev",
+        "cognito_redirect_url": "https://d1s4eo1xk1bdoq.cloudfront.net/auth",
         "region": "us-east-1",
         "cognito_state": "Is the cognito set up",
         "cognito_response_type": "token"
