@@ -1,7 +1,7 @@
 import { CssBaseline, LinearProgress } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { deepPurple, teal } from '@mui/material/colors';
+import { purple, brown } from '@mui/material/colors';
 import { RouterProvider } from 'react-router-dom';
 import './App.css';
 import AuthProvider from './Auth/contexts/authContext';
@@ -13,15 +13,15 @@ function App() {
   const theme = createTheme({
     palette: {
       primary: {
-        main: deepPurple[400],
-        light: deepPurple[200],
-        dark: deepPurple[800],
+        main: purple[400],
+        light: purple[100],
+        dark: purple[800],
         contrastText: '#000',
       },
       secondary: {
-        main: teal[500],
-        light: teal[300],
-        dark: teal[800],
+        main: brown[500],
+        light: brown[100],
+        dark: brown[900],
         contrastText: '#000',
       },
     },
