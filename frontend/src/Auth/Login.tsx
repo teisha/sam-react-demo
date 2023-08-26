@@ -76,7 +76,7 @@ const Login = () => {
         console.log('TOKEN IS VALID; GETTING USER INFO FOR ' + username);
         let user: IUser = {} as IUser;
         try {
-          const userService: UserService = new UserService(); //appContext.config.backendUrl);
+          const userService: UserService = new UserService(appContext.config.backendUrl);
           user = await userService.getUserData(username || '', token.rawtoken);
           console.log(`SET CONTEXT USER: ${JSON.stringify(user)}`);
           await context.setUserContext(user);

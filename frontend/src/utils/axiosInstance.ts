@@ -1,18 +1,17 @@
-import axios, { Axios, AxiosInstance } from "axios"
-import { useAppContext } from "../contexts/appContext";
+import axios, { Axios, AxiosInstance } from 'axios';
+import { EnvironmentService } from '../services/environmentService';
 
 var axiosInstance: AxiosInstance;
 
-const instantiateAxios = () => {
-  const appContext = useAppContext()
+const instantiateAxios = (backendUrl: string) => {
   if (!axiosInstance) {
     axiosInstance = axios.create({
-      baseURL: appContext.config.backendUrl,
-      responseType: "json"
-    })
+      baseURL: backendUrl,
+      responseType: 'json',
+    });
+    console.log('New Axios Instance Created');
   }
-  return axiosInstance
-}
-axiosInstance = instantiateAxios();
+  return axiosInstance;
+};
 
-export default axiosInstance;
+export default instantiateAxios;

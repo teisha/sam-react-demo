@@ -45,6 +45,7 @@ export class UserSchema {
       PK: USER_PK,
       SK: username,
     };
+    console.log("Get By Key: ", { key });
     const response = await this.dynamo.getItem(key);
     if (!response.Item) {
       return null;

@@ -29,39 +29,31 @@ Resources:
     Type: "AWS::DynamoDB::Table"
     DeletionPolicy: Retain
     Properties:
-      TableName: !Sub ${ProjectName}-data #Single table design - structures handled in code
+      TableName: !Sub ${ProjectName}-table #Single table design - structures handled in code
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       AttributeDefinitions:
-        - AttributeName: pk
+        - AttributeName: PK
           AttributeType: S
-        - AttributeName: sk
+        - AttributeName: SK
           AttributeType: S
         # - AttributeName: start
         #   AttributeType: S
       KeySchema:
-        - AttributeName: pk
+        - AttributeName: PK
           KeyType: HASH
-        - AttributeName: sk
+        - AttributeName: SK
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       GlobalSecondaryIndexes:
         - IndexName: GSI1
           KeySchema:
-            - AttributeName: sk
+            - AttributeName: SK
               KeyType: HASH
-            - AttributeName: pk
+            - AttributeName: PK
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-        # - IndexName: startIndex
-        #   KeySchema:
-        #     - AttributeName: start
-        #       KeyType: HASH
-        #     - AttributeName: pk
-        #       KeyType: RANGE
-        #   Projection:
-        #     ProjectionType: ALL
 
   Api:
     Type: AWS::Serverless::Api
@@ -133,7 +125,7 @@ Resources:
   UserApiHandler:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: lambda_user_api.handler
+      Handler: dist/index.getUserHandler
       Runtime: nodejs18.x
       Policies:
         - Version: "2012-10-17"
@@ -196,9 +188,9 @@ Resources:
         - email
         - openid
         - profile
-      CallbackURLs: # Url Cognito will forward to after auth
-        - http://localhost:4000/auth.html
-        - !Sub https://${ClientCloudFrontDistro.DomainName}/auth.html
+      CallbackURLs: # Url Cognito will forward to after auth - remove the localhost for prod app
+        - http://localhost:4000/auth
+        - !Sub https://${ClientCloudFrontDistro.DomainName}/auth
       LogoutURLs:
         - http://localhost:4000/
         - !Sub https://${ClientCloudFrontDistro.DomainName}
@@ -275,7 +267,6 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: "Origin Access ID for front end"
-
 
 Outputs:
   CogntioRedirectUri:
