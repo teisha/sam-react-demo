@@ -11,12 +11,9 @@ const HomePage: React.FunctionComponent<AuthProps> = (props: AuthProps) => {
       flexDirection='column'
       sx={{ width: '100%', height: '100%' }}
     >
-      <Paper
-        elevation={3}
-        sx={{ padding: '1rem', backgroundColor: 'secondary.light', width: '100%', height: '100%' }}
-      >
+      <Paper elevation={3} sx={{ padding: '1rem', width: '100%', height: '100%' }}>
         <Typography color='primary.dark' variant='h3'>
-          {props.isLoggedIn ? 'User Form' : 'Please log in'}
+          {props.isLoggedIn ? 'Please select an option from the menu' : 'Please log in'}
         </Typography>
         <img src='tree.webp' alt='tree' width='50%' height='50%' />
       </Paper>

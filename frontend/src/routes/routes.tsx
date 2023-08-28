@@ -3,21 +3,19 @@ import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 import Auth from '../Auth/Auth';
 import Logout from '../Auth/Logout';
 
-
 import Error404 from '../components/Errors/Error404';
 import HomePage from '../components/HomePage';
 
 import PageLayout from '../layouts/PageLayout';
-const Login =  React.lazy(() => import('../Auth/Login'))
-
-
+import Profile from '../components/Profile/Profile';
+const Login = React.lazy(() => import('../Auth/Login'));
 
 const appRoutesConfig: RouteObject[] = [
   {
     path: '/index',
     element: <HomePage />,
-    errorElement: <Error404 />
-  }
+    errorElement: <Error404 />,
+  },
 ];
 /*
     caseSensitive?: AgnosticNonIndexRouteObject["caseSensitive"];
@@ -44,7 +42,7 @@ const authRoutesConfig: RouteObject[] = [
   },
   {
     path: '/logout',
-    element: <Logout />
+    element: <Logout />,
   },
   {
     path: '/auth',
@@ -54,6 +52,10 @@ const authRoutesConfig: RouteObject[] = [
     path: '/error-pages/error-404',
     element: <Error404 />,
   },
+  {
+    path: '/profile',
+    element: <Profile color='secondary.dark' />,
+  },
 ];
 
 const allRoutes = [...appRoutesConfig, ...authRoutesConfig].reduce((routeList, currentRoute) => {
@@ -62,9 +64,9 @@ const allRoutes = [...appRoutesConfig, ...authRoutesConfig].reduce((routeList, c
 }, [] as RouteObject[]);
 
 const catchAllRoute: RouteObject = {
-  path: "*",
-  element: <Navigate to='/index' replace />
-}
+  path: '*',
+  element: <Navigate to='/index' replace />,
+};
 
 const root: RouteObject = {
   path: '/',
@@ -76,8 +78,5 @@ const root: RouteObject = {
   ),
   children: [...allRoutes, catchAllRoute],
 };
-
-
-
 
 export const router = createBrowserRouter([root]);

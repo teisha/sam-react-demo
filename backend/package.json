@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "test": "DEPLOYMENT_ENV=dev jest",
     "build": "node esbuild",
     "deploy:dev": "./scripts/deploy-dev.sh",
     "deploy:dev:frontend": "./scripts/deploy-react.sh lsoft us-east-1 serverless-react-dev"
@@ -19,6 +20,7 @@
     "amazon-cognito-identity-js": "^6.2.0"
   },
   "devDependencies": {
+    "@aws-sdk/credential-providers": "^3.398.0",
     "@types/node": "^20.3.0",
     "esbuild": "^0.18.2"
   }

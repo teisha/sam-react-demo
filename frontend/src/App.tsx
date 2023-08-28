@@ -16,7 +16,7 @@ function App() {
         main: purple[400],
         light: purple[100],
         dark: purple[800],
-        contrastText: '#000',
+        contrastText: brown[900],
       },
       secondary: {
         main: brown[500],

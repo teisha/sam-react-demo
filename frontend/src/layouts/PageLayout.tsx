@@ -1,4 +1,4 @@
-import { Grid, useTheme } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ const PageLayout: React.FC<PageLayoutProps> = () => {
             color={theme.palette.secondary.dark}
           />
         </Grid>
-        <Grid item xs={10} sx={{ p: 0.01 }}>
+        <Grid item xs={10} sx={{ p: 0.01, backgroundColor: 'secondary.light' }}>
           <Outlet />
         </Grid>
       </Grid>

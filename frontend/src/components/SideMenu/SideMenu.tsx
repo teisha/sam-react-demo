@@ -30,13 +30,22 @@ const SideMenu = (props: SideMenuProps) => {
           </small>
         </li>
         {authContext.isLoggedIn ? (
-          <li>
-            <Link style={{ textDecoration: 'none' }} to='/logout'>
-              <Button variant='text' sx={{ color: props.color, fontWeight: 'bold' }}>
-                Logout
-              </Button>
-            </Link>
-          </li>
+          <>
+            <li>
+              <Link style={{ textDecoration: 'none' }} to='/profile'>
+                <Button variant='text' sx={{ color: props.color, fontWeight: 'bold' }}>
+                  Profile
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <Link style={{ textDecoration: 'none' }} to='/logout'>
+                <Button variant='text' sx={{ color: props.color, fontWeight: 'bold' }}>
+                  Logout
+                </Button>
+              </Link>
+            </li>
+          </>
         ) : (
           <li>
             <Link style={{ textDecoration: 'none' }} to='/login'>

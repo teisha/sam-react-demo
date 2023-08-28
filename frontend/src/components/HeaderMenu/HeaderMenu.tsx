@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { DataObject } from '@mui/icons-material';
 import { AppBar, Container, MenuItem, Toolbar } from '@mui/material';
 import { useAuthContext } from '../../Auth/contexts/authContext';
 interface HeaderMenuProps {
@@ -20,6 +20,7 @@ const TitledBanner = styled.div<BannerProps>`
   color: ${(props) => props.color ?? '#FFF'};
   background: ${(props) => props.backgroundColor ?? '#000'};
 `;
+
 const HeaderMenu = (props: HeaderMenuProps) => {
   const context = useAuthContext();
   return (
@@ -34,14 +35,14 @@ const HeaderMenu = (props: HeaderMenuProps) => {
         >
           <MenuItem component='section'>
             <Link to='/index'>
-              <MailOutlineIcon sx={{ color: props.color, height: '100%', mr: 1 }} />
+              <DataObject sx={{ color: props.color, height: '100%', mr: 1 }} />
             </Link>
             <TitledBanner
               backgroundColor={props.backgroundColor}
               color={props.color}
               alignTo={'center'}
             >
-              Mail Manager
+              Data Things Application
             </TitledBanner>
           </MenuItem>
 
