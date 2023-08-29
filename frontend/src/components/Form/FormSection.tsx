@@ -5,7 +5,6 @@ const FormSection = styled.div`
   text-align: left;
   .label, 
   > label {
-    display: inline-flex;
     line-height: 5em;
     font-weight: 700;
   }

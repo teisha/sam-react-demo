@@ -25,17 +25,8 @@ const FormTextField = styled(TextField)(({ theme }) => ({
 
 export default FormTextField;
 
-/*
-    root: {
-        "& label": {
-            transformOrigin: "top right",
-            right: '0',
-            left: "auto"
-        }
-    }
-})(TextField)
-*/
 
+// eventually use this to pass in labels...
 // export type FormTextFieldProps {
 //     name: string,
 //     value: string,

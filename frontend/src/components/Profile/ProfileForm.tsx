@@ -1,12 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { MailOutline } from '@mui/icons-material';
-import { FormLabel, Select, MenuItem, TextField, Typography } from '@mui/material';
+import { MenuItem, Select } from '@mui/material';
 import React from 'react';
+import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useAuthContext } from '../../Auth/contexts/authContext';
-import { UserType, UserSchema } from '../../shared/schema/user.schema';
+import { UserSchema, UserType } from '../../shared/schema/user.schema';
 import FormButton from '../Form/FormButton';
 import FormSection from '../Form/FormSection';
-import { useForm, SubmitHandler, Controller, SubmitErrorHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import FormTextField from '../Form/FormTextField';
 
 const INPUT_FIELD_WIDTH = '75%'
@@ -129,9 +129,6 @@ const ProfileForm = (props: {}) => {
         <p>{errors.dateCreated?.message}</p>
       </FormSection>
 
-      {/* <p>
-        <input type='submit' disabled={isSubmitting} />
-      </p> */}
       <FormButton type="submit" disabled={isSubmitting} variant='contained'>
         Submit
       </FormButton>
