@@ -7,9 +7,10 @@ import { useAuthContext } from './contexts/authContext';
 
 import { useNavigate } from 'react-router-dom';
 import  UserService  from '../services/UserService';
-import IUser from '../shared/models/IUser';
+
 import { defaultUrl } from './models/IAuth';
 import { useAppContext } from '../contexts/appContext';
+import { UserType } from '../shared/schema/user.schema';
 
 // the purpose of this page is to capture the return from Cognito and set tokens
 const Auth: React.FC<{}> = ()  => {
@@ -51,7 +52,7 @@ const Auth: React.FC<{}> = ()  => {
                   console.log(`Set ${token.cognito_username} ${JSON.stringify(context.user)}`);
 
                   // TODO 
-                  let user: IUser = {} as IUser;
+                  let user: UserType = {} as UserType;
                   try {
                       const userService: UserService = new UserService(appContext.config.backendUrl);
                       user = await userService.getUserData(token.cognito_username!, token.rawtoken)
@@ -64,7 +65,6 @@ const Auth: React.FC<{}> = ()  => {
 
                   if (user && user.username) {
                       await setUserLoggedIn(user.firstname ?? user.username );
-                      // console.log("AUTH - USER SET IN CONTEXT: ", context.user)
                   }
                   console.log('AUTH - TOKEN SET IN CONTEXT: ', context.token);
                   if (context.redirectOnLogin && context.redirectOnLogin !== defaultUrl) {

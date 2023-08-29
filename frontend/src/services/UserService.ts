@@ -1,4 +1,5 @@
-import IUser from '../shared/models/IUser';
+
+import { UserType } from '../shared/schema/user.schema';
 import HttpService from './HttpService';
 
 class UserService {
@@ -7,7 +8,7 @@ class UserService {
     this.httpService = new HttpService(backendUrl);
   }
 
-  async getUserData(username: string, rawtoken: string): Promise<IUser> {
+  async getUserData(username: string, rawtoken: string): Promise<UserType> {
     console.log(`GET USERNAME FROM TOKEN: ${username}`);
     const params = {
       url: `users/${username}`,
@@ -16,13 +17,13 @@ class UserService {
     try {
       const user_data = await this.httpService.get(params, username, rawtoken);
       console.log(`USER DATA FROM USERSERVICE: ${JSON.stringify(user_data)}`);
-      return user_data as IUser;
+      return {...user_data, dateCreated: user_data.dateCreated ? new Date(parseInt(user_data.dateCreated)) : undefined } as UserType;
       //get user data from token.email
     } catch (error) {
       console.error(`Could not retrieve user data for ${username}`);
       console.error((error as unknown as Error).message);
     }
-    return {} as IUser;
+    return {} as UserType;
   }
 }
 

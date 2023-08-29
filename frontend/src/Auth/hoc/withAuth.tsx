@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/appContext';
 import { getLogger } from '../../services/loggingService';
-import IUser from '../../shared/models/IUser';
 import { useAuthContext } from '../contexts/authContext';
+import { UserType } from '../../shared/schema/user.schema';
 
 
 const withAuth = (WrappedComponent: React.FunctionComponent<AuthProps> ) => {
@@ -49,7 +49,7 @@ const withAuth = (WrappedComponent: React.FunctionComponent<AuthProps> ) => {
 }
 
 export interface AuthProps {
-    user: IUser,
+    user: UserType,
     isLoggedIn: boolean
 }
 export default withAuth;

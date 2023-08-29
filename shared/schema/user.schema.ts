@@ -2,8 +2,8 @@
 import { number, object, string, date, TypeOf, nativeEnum } from "zod";
 
 export enum UserStatus {
-  ACTIVE,
-  DEACTIVATED,
+  ACTIVE = "ACTIVE",
+  DEACTIVATED = "DEACTIVATED",
 }
 
 export const UserSchema = object({

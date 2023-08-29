@@ -1,19 +1,21 @@
 import { MailOutline } from '@mui/icons-material';
-import { FormLabel, Select, MenuItem, TextField } from '@mui/material';
+import { FormLabel, Select, MenuItem, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { useAuthContext } from '../../Auth/contexts/authContext';
 import { UserType, UserSchema } from '../../shared/schema/user.schema';
 import FormButton from '../Form/FormButton';
 import FormSection from '../Form/FormSection';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller, SubmitErrorHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormTextField from '../Form/FormTextField';
 
+const INPUT_FIELD_WIDTH = '75%'
 const ProfileForm = (props: {}) => {
   const authContext = useAuthContext();
   const username = authContext.token?.cognito_username;
+  console.log("Load profile for " + username, {user: authContext.user })
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     control,
@@ -26,20 +28,26 @@ const ProfileForm = (props: {}) => {
       email: authContext.user?.email,
       firstname: authContext.user?.firstname,
       lastname: authContext.user?.lastname,
+      dateCreated: authContext.user?.dateCreated ?? new Date()
     },
   });
 
   const onSubmit: SubmitHandler<UserType> = (data) => {
+    console.log("BUTTON SUBMIT!")
     console.log({ data });
-    const profile = { ...data, dateCreated: authContext.user?.dateCreated ?? new Date() };
-    console.log(profile);
+
     // save data to db
     // authContext.setUserContext(data);
     reset();
   };
 
+  const onError: SubmitErrorHandler<UserType> = (data, e) => {
+    console.log("Something went wrong")
+    console.log({data})
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <FormSection>
         <label>
           Status&nbsp;
@@ -47,7 +55,7 @@ const ProfileForm = (props: {}) => {
             name='status'
             control={control}
             render={({ field }) => (
-              <Select {...field} sx={{ width: '80%' }} aria-description='Status'>
+              <Select {...field} sx={{ width: INPUT_FIELD_WIDTH, textAlign: "left", marginLeft: '13%' }} aria-description='Status'>
                 <MenuItem value={'ACTIVE'} aria-description='Active'>
                   Active
                 </MenuItem>
@@ -58,52 +66,73 @@ const ProfileForm = (props: {}) => {
             )}
           />
         </label>
+        <p>{errors.status?.message}</p>
       </FormSection>
       <FormSection>
-        <label>
-          First Name&nbsp;
+
           <Controller
             name='firstname'
             control={control}
             render={({ field }) => (
-              <TextField {...field} placeholder='First Name' aria-description='First Name' />
+              <FormTextField {...field} 
+                label='First Name'
+                placeholder='First Name' 
+                aria-description='First Name' />
             )}
           />
-        </label>
+
         <p>{errors.firstname?.message}</p>
       </FormSection>
       <FormSection>
-        <label>
-          Last Name&nbsp;
           <Controller
             name='lastname'
             control={control}
             render={({ field }) => (
-              <TextField {...field} placeholder='Last Name' aria-description='Last Name' />
+              <FormTextField {...field} 
+                label='Last Name'
+                placeholder='Last Name' 
+                aria-description='Last Name' />
             )}
           />
-        </label>
         <p>{errors.lastname?.message}</p>
       </FormSection>
       <FormSection>
-        <label>
-          <MailOutline sx={{ color: 'secondary.dark', mt: 1 }} />
-          Email&nbsp;
+          
           <Controller
             name='email'
             control={control}
             render={({ field }) => (
-              <TextField {...field} placeholder='Email' aria-description='Email' />
+              <FormTextField {...field} 
+              label={<p style={{lineHeight: '1em'}}><MailOutline sx={{ color: 'secondary.dark', mt: 0 }} />&nbsp;Email</p>} 
+              placeholder='Email' 
+              aria-description='Email' />
             )}
           />
-        </label>
         <p>{errors.email?.message}</p>
+      </FormSection>
+
+      <FormSection>
+          <Controller
+            name='dateCreated'
+            control={control}
+            render={({ field }) => (
+              <FormTextField {...field} 
+                variant="standard"
+                value={field.value.toISOString() } 
+                label='Date Created'
+                sx={{ border: 0 , 
+                    input: {textAlign: "center"},
+                    fontSize : "small"}} 
+                InputProps={{readOnly: true, disableUnderline: true }} />
+            )}
+          />
+        <p>{errors.dateCreated?.message}</p>
       </FormSection>
 
       {/* <p>
         <input type='submit' disabled={isSubmitting} />
       </p> */}
-      <FormButton disabled={isSubmitting} variant='contained'>
+      <FormButton type="submit" disabled={isSubmitting} variant='contained'>
         Submit
       </FormButton>
     </form>

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../contexts/appContext';
 import { useAuthContext } from './contexts/authContext';
-
-import IUser from '../shared/models/IUser';
 import { CognitoService } from './services/CognitoService';
 
 import { Box, Button, Typography } from '@mui/material';
@@ -13,6 +11,7 @@ import IAuthToken from './models/IAuthToken';
 import LoginIcon from '@mui/icons-material/Login';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import React from 'react';
+import { UserType } from '../shared/schema/user.schema';
 
 const Login = () => {
   console.log('Login through Cognito');
@@ -31,7 +30,7 @@ const Login = () => {
   // const initialValues: LoginInputs = { email: '', password: '', };
 
   const [error, setError] = useState('');
-  const [userLoggedIn, setUserLoggedIn] = useState<IUser | null>(null);
+  const [userLoggedIn, setUserLoggedIn] = useState<UserType | null>(null);
 
   console.log('LOGIN PAGE', appContext.config);
 
@@ -74,7 +73,7 @@ const Login = () => {
         const username = token.cognito_username;
 
         console.log('TOKEN IS VALID; GETTING USER INFO FOR ' + username);
-        let user: IUser = {} as IUser;
+        let user: UserType = {} as UserType;
         try {
           const userService: UserService = new UserService(appContext.config.backendUrl);
           user = await userService.getUserData(username || '', token.rawtoken);
