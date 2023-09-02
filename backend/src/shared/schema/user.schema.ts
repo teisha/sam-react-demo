@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { number, object, string, date, TypeOf, nativeEnum } from "zod";
+import { object, string, date, TypeOf, nativeEnum } from "zod";
 
 export enum UserStatus {
   ACTIVE = "ACTIVE",

@@ -1,10 +1,10 @@
 import { APIGatewayProxyResult } from "aws-lambda";
 
-export interface LambdaReturnType {
-  statusCode: number;
-  body?: string;
-  "X-Amz-Function-Error": string;
-}
+// export interface LambdaReturnType {
+//   statusCode: number;
+//   body?: string;
+//   "X-Amz-Function-Error": string;
+// }
 
 export class BaseHandler {
   constructor() {}

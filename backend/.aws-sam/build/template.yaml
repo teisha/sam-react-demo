@@ -99,7 +99,7 @@ Resources:
   UserApiHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: dist/index.getUserHandler
+      Handler: dist/index.userHandler
       Runtime: nodejs18.x
       Policies:
       - Version: '2012-10-17'

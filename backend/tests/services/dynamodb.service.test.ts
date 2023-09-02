@@ -1,17 +1,17 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { describe, expect, it, beforeEach } from "@jest/globals";
 import { DynamoService } from "../../src/services/dynamodb.service";
-import { connectDynamo, setupEnvironment } from "../testUtils";
+
+import { container } from "../helpers/dependencyContainer";
 
 // npm run backend:test -- cdk/tests/services/dynamodb.service.test.ts
 describe("dynamodb service", () => {
-  let dynamodb: DynamoDBClient;
   let dynamoService: DynamoService;
   beforeEach(() => {
-    setupEnvironment();
-    dynamodb = connectDynamo();
-    dynamoService = new DynamoService("MailSort_dev", dynamodb);
+    dynamoService = container.resolve(DynamoService);
   });
+
+
   it("saves and retrieves a record", async () => {
     const record = { PK: "one", SK: "two", attr1: "anything" };
     await dynamoService.deleteItem({ PK: "one", SK: "two" });

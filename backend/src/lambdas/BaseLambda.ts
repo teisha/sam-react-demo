@@ -16,7 +16,7 @@ export class BaseHandler {
     if (message) {
       returnVal.body = JSON.stringify({ message });
     }
-    returnVal["X-Amz-Function-Error"] = message;
+    // returnVal["X-Amz-Function-Error"] = message;
     console.log(`RETURNING:: ${JSON.stringify(returnVal)}`);
     return returnVal;
   }

@@ -1,63 +1,74 @@
-import { DynamoDBClient,  } from '@aws-sdk/client-dynamodb';
-import { BatchWriteCommandOutput, DeleteCommandOutput, DynamoDBDocument, GetCommandOutput, PutCommandOutput } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  BatchWriteCommandOutput,
+  DeleteCommandOutput,
+  DynamoDBDocument,
+  GetCommandOutput,
+  PutCommandOutput,
+} from "@aws-sdk/lib-dynamodb";
 
 const translateConfig = {
-    marshallOptions: {
-        // Whether to automatically convert empty strings, blobs, and sets to `null`.
-        convertEmptyValues: false, // false, by default.
-        // Whether to remove undefined values while marshalling.
-        removeUndefinedValues: true, // false, by default.
-        // Whether to convert typeof object to map attribute.
-        convertClassInstanceToMap: true, // false, by default.
-    },
-    unmarshallOptions : {
-        // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
-        wrapNumbers: false, // false, by default.
-    }
-}
+  marshallOptions: {
+    // Whether to automatically convert empty strings, blobs, and sets to `null`.
+    convertEmptyValues: false, // false, by default.
+    // Whether to remove undefined values while marshalling.
+    removeUndefinedValues: true, // false, by default.
+    // Whether to convert typeof object to map attribute.
+    convertClassInstanceToMap: true, // false, by default.
+  },
+  unmarshallOptions: {
+    // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+    wrapNumbers: false, // false, by default.
+  },
+};
+
 export class DynamoService {
-    protected ddbDocClient: DynamoDBDocument;
+  protected ddbDocClient: DynamoDBDocument;
 
-    constructor(protected tableName: string, protected client: DynamoDBClient ) {
-        this.ddbDocClient = DynamoDBDocument.from(client, translateConfig);
-    }
+  constructor(protected tableName: string, protected client: DynamoDBClient) {
+    this.ddbDocClient = DynamoDBDocument.from(client, translateConfig);
+  }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async putItem(item: Record<string, any>): Promise<PutCommandOutput> {
-        return await this.ddbDocClient.put({
-            Item: item,
-            TableName: this.tableName
-        });
-    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async putItem(item: Record<string, any>): Promise<PutCommandOutput> {
+    return await this.ddbDocClient.put({
+      Item: item,
+      TableName: this.tableName,
+    });
+  }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async batchWrite(items: Record<string, any>[]): Promise<BatchWriteCommandOutput> {
-        const reqs = {
-            [this.tableName] : items.map(item => ({PutRequest: {Item: item }} ))
-        } 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async batchWrite(
+    items: Record<string, any>[]
+  ): Promise<BatchWriteCommandOutput> {
+    const reqs = {
+      [this.tableName]: items.map((item) => ({ PutRequest: { Item: item } })),
+    };
 
-        return await this.ddbDocClient.batchWrite({
-            RequestItems: reqs 
-        })
-    }
+    return await this.ddbDocClient.batchWrite({
+      RequestItems: reqs,
+    });
+  }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async getItem(key: Record<string, any>): Promise<GetCommandOutput> {
-        return await this.ddbDocClient.get({
-            Key: key,
-            TableName: this.tableName
-        })
-    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async getItem(key: Record<string, any>): Promise<GetCommandOutput> {
+    return await this.ddbDocClient.get({
+      Key: key,
+      TableName: this.tableName,
+    });
+  }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async deleteItem (key: Record<string, any>): Promise<DeleteCommandOutput> {
-        return await this.ddbDocClient.delete({
-            TableName: this.tableName,
-            Key: key
-        })
-    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async deleteItem(
+    key: Record<string, any>
+  ): Promise<DeleteCommandOutput> {
+    return await this.ddbDocClient.delete({
+      TableName: this.tableName,
+      Key: key,
+    });
+  }
 
-/*
+  /*
     Implement Query:
     import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbDocClient } from "../libs/ddbDocClient.js";
@@ -98,18 +109,7 @@ queryTable();
 
 
 */
-
 }
-
-
-
-
-
-
-
-
-
-
 
 /*
 import { DynamoDB } from 'aws-sdk';
