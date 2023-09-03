@@ -6,6 +6,7 @@
   "scripts": {
     "install:all": "npm install --workspaces",
     "copyshared": "./scripts/copy_shared.sh",
+    "backend:test": "npm run deploy:dev -w backend",
     "backend:deploydev": "npm run deploy:dev -w backend",
     "frontend:builddev": "npm run build:dev -w frontend",
     "frontend:deploydev": "npm run frontend:builddev && npm run deploy:dev:frontend -w backend",

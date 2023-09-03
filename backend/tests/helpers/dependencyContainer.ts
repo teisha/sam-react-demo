@@ -7,7 +7,7 @@ import { Env } from "../../src/services/environment.service";
 import { UserDynamoSchema } from "../../src/services/dynamoSchemas/userSchema";
 import { UserHandler } from "../../src/lambdas/UserHandler";
 
-process.env.PROFILE = "power-user";
+process.env.PROFILE = "lsoft";
 process.env.REGION = "us-east-1";
 process.env.DYNAMO_TABLE = "serverless-react-dev-table";
 process.env.LOG_LEVEL = "debug"; // error, warn, info, debug
@@ -23,7 +23,7 @@ container.register("DYNAMO_TABLE", { useValue: process.env.DYNAMO_TABLE });
 container.register(DynamoService, {
   useFactory: () =>
     new DynamoService(
-      container.resolve("DYNAMO_TABLE"),
+      process.env.DYNAMO_TABLE ?? "",
       new DynamoDBClient({
         credentials: fromIni({
           profile: process.env.PROFILE,

@@ -1,16 +1,15 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import "reflect-metadata";
 import { describe, expect, it, beforeEach } from "@jest/globals";
 import { DynamoService } from "../../src/services/dynamodb.service";
 
 import { container } from "../helpers/dependencyContainer";
 
+let dynamoService: DynamoService;
 // npm run backend:test -- cdk/tests/services/dynamodb.service.test.ts
 describe("dynamodb service", () => {
-  let dynamoService: DynamoService;
   beforeEach(() => {
     dynamoService = container.resolve(DynamoService);
   });
-
 
   it("saves and retrieves a record", async () => {
     const record = { PK: "one", SK: "two", attr1: "anything" };
@@ -20,7 +19,8 @@ describe("dynamodb service", () => {
 
     const rec = await dynamoService.putItem(record);
     expect(rec).not.toBeUndefined();
-    console.log("INSERT", JSON.stringify(rec?.Attributes));
+    expect(rec.$metadata.httpStatusCode).toBe(200);
+    console.log("INSERT", JSON.stringify(rec));
 
     const afterRec = await dynamoService.getItem({ PK: "one", SK: "two" });
     console.log(afterRec.Item);
@@ -44,7 +44,8 @@ describe("dynamodb service", () => {
 
     const rec = await dynamoService.batchWrite(records);
     expect(rec).not.toBeUndefined();
-    console.log("INSERT", JSON.stringify(rec.UnprocessedItems));
+    expect(rec.$metadata.httpStatusCode).toBe(200);
+    console.log("INSERT", JSON.stringify(rec));
 
     let afterRec = await dynamoService.getItem({ PK: "one", SK: "two" });
     expect(afterRec.Item).toEqual(records[0]);
