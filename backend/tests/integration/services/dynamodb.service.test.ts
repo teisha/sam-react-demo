@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { describe, expect, it, beforeEach } from "@jest/globals";
-import { DynamoService } from "../../src/services/dynamodb.service";
+import { DynamoService } from "../../../src/services/dynamodb.service";
 
-import { container } from "../helpers/dependencyContainer";
+import { container } from "../../helpers/dependencyContainer";
 
 let dynamoService: DynamoService;
 // npm run backend:test -- cdk/tests/services/dynamodb.service.test.ts

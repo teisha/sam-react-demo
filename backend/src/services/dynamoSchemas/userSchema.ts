@@ -14,7 +14,7 @@ interface DbModel {
   firstname: string;
   lastname: string;
   email: string;
-  dateCreated?: Date;
+  dateCreated?: number;
 }
 
 export const USER_PK = "USER";
@@ -63,19 +63,20 @@ export class UserDynamoSchema {
       firstname: item.firstname,
       lastname: item.lastname,
       email: item.email,
-      dateCreated: item.dateCreated,
+      dateCreated: item.dateCreated?.getTime(), // to Epoch time
     };
     return model;
   }
 
   convertDbModelToItem(data: DbModel): UserType {
+    console.log("RETRIEVED", { data });
     const item: UserType = {
       username: data.SK,
       status: data.status,
       firstname: data.firstname,
       lastname: data.lastname,
       email: data.email,
-      dateCreated: data.dateCreated ?? new Date(),
+      dateCreated: data.dateCreated ? new Date(data.dateCreated) : new Date(),
     };
     return item;
   }
