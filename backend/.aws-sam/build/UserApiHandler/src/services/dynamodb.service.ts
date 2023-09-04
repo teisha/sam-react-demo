@@ -6,6 +6,7 @@ import {
   GetCommandOutput,
   PutCommandOutput,
 } from "@aws-sdk/lib-dynamodb";
+import { injectable, inject } from "tsyringe";
 
 const translateConfig = {
   marshallOptions: {
@@ -22,10 +23,14 @@ const translateConfig = {
   },
 };
 
+@injectable()
 export class DynamoService {
   protected ddbDocClient: DynamoDBDocument;
 
-  constructor(protected tableName: string, protected client: DynamoDBClient) {
+  constructor(
+    @inject("DYNAMO_TABLE") protected tableName: string,
+    @inject(DynamoDBClient) client: DynamoDBClient
+  ) {
     this.ddbDocClient = DynamoDBDocument.from(client, translateConfig);
   }
 
