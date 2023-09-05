@@ -160,7 +160,7 @@ Resources:
           Properties:
             RestApiId: !Ref Api
             Path: "/users/{username}"
-            Method: PUT
+            Method: POST
 
   ###
   ###  Security
@@ -192,7 +192,7 @@ Resources:
         - http://localhost:4000/auth
         - !Sub https://${ClientCloudFrontDistro.DomainName}/auth
       LogoutURLs:
-        - http://localhost:4000/
+        - http://localhost:4000
         - !Sub https://${ClientCloudFrontDistro.DomainName}
       AllowedOAuthFlowsUserPoolClient: true
   CognitoDomain:

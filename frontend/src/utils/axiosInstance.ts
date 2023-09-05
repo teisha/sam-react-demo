@@ -9,7 +9,7 @@ const instantiateAxios = (backendUrl: string) => {
       baseURL: backendUrl,
       responseType: 'json',
     });
-    console.log('New Axios Instance Created');
+    console.log('New Axios Instance Created for ' + backendUrl);
   }
   return axiosInstance;
 };

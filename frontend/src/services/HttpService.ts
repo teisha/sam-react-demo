@@ -51,19 +51,13 @@ class HttpService {
     if (!rawtoken) {
       throw new Error('Cannot call backend API without security token');
     }
-    console.log(`${username}:: POST: ${url}`);
+    console.log(`${username}:: POST: ${url}`, { queryData });
+    console.log({ rawtoken });
     try {
-      const response = await this.axiosInstance.post(
-        url,
-        {
-          data: queryData,
-          responseType: JSON,
-          withCredentials: true,
-        },
-        {
-          headers: { Authorization: 'Bearer ' + rawtoken },
-        },
-      );
+      const response = await this.axiosInstance.post(url, queryData, {
+        withCredentials: false,
+        headers: { Authorization: 'Bearer ' + rawtoken, 'Content-Type': 'application/json' },
+      });
 
       return response.data;
     } catch (error) {

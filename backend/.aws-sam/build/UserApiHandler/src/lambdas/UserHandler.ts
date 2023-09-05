@@ -16,7 +16,7 @@ export class UserHandler extends BaseHandler {
     event: APIGatewayProxyEvent
   ): Promise<APIGatewayProxyResult> {
     const { resource, httpMethod } = event;
-    console.log(resource);
+    console.log({ event });
     if (httpMethod === "GET") {
       return this.getUser(event.pathParameters?.username);
     } else if (httpMethod === "POST") {

@@ -15,7 +15,7 @@ const HomePage: React.FunctionComponent<AuthProps> = (props: AuthProps) => {
         <Typography color='primary.dark' variant='h3'>
           {props.isLoggedIn ? 'Please select an option from the menu' : 'Please log in'}
         </Typography>
-        <img src='tree.webp' alt='tree' width='50%' height='50%' />
+        <img src='tree.webp' alt='tree' width='75%' height='50%' />
       </Paper>
     </Box>
   );

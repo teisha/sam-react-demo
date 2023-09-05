@@ -8,6 +8,7 @@ import AuthProvider from './Auth/contexts/authContext';
 import { AppContextProvider } from './contexts/appContext';
 import { router } from './routes/routes';
 import React from 'react';
+import MessagePopup from './components/Alerts/MessagePopup';
 
 function App() {
   const theme = createTheme({

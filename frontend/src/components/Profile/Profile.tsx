@@ -4,9 +4,11 @@ import { useAuthContext } from '../../Auth/contexts/authContext';
 import withAuth, { AuthProps } from '../../Auth/hoc/withAuth';
 
 import ProfileForm from './ProfileForm';
+import { useAppContext } from '../../contexts/appContext';
 
 const Profile = (props: AuthProps) => {
   const authContext = useAuthContext();
+  const appContext = useAppContext();
   const username = authContext.token?.cognito_username;
 
   return (

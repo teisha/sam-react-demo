@@ -1,4 +1,3 @@
-
 import { UserType } from '../shared/schema/user.schema';
 import HttpService from './HttpService';
 
@@ -17,13 +16,36 @@ class UserService {
     try {
       const user_data = await this.httpService.get(params, username, rawtoken);
       console.log(`USER DATA FROM USERSERVICE: ${JSON.stringify(user_data)}`);
-      return {...user_data, dateCreated: user_data.dateCreated ? new Date(parseInt(user_data.dateCreated)) : undefined } as UserType;
+      return {
+        ...user_data,
+        dateCreated: user_data.dateCreated ? new Date(parseInt(user_data.dateCreated)) : undefined,
+      } as UserType;
       //get user data from token.email
     } catch (error) {
       console.error(`Could not retrieve user data for ${username}`);
-      console.error((error as unknown as Error).message);
+      console.error((error as Error).message);
     }
     return {} as UserType;
+  }
+
+  async saveUserData(username: string, userData: UserType, rawtoken: string): Promise<string> {
+    console.log('POST USER DATA:', { userData });
+    const url = `users/${username}`;
+
+    try {
+      const user_response = await this.httpService.post(
+        url,
+        JSON.stringify(userData),
+        rawtoken,
+        username,
+      );
+      console.log({ user_response });
+      return user_response.body;
+    } catch (error) {
+      console.error(`Could not save user data for ${username}`);
+      console.error((error as Error).message);
+    }
+    return 'User Data Not Saved';
   }
 }
 
