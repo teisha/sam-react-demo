@@ -94,9 +94,9 @@ These values for the URL redirecting to Cognito in the example above are taken f
 
 |  Outputs  |
 | --------------------------------------------------|
-| **Key:**  CognitoRedirectUri   <br>  **Description:** Redirect URI to front end from Cognito User Pool  <br>  **Value:**  https\://<domain>.cloudfront.net/auth |
-|  **Key:**   CognitoClientId <br>  **Description:**  Cognito client ID <br>  **Value:**  <cognito client ID> |  
-|  **Key:**   CognitoDomain <br>  **Description:**  Cogntio Domain <br>  **Value:**  <cognito client domain> |  
+| **Key:**  CognitoRedirectUri   <br>  **Description:** Redirect URI to front end from Cognito User Pool  <br>  **Value:**  https\:// \<domain\>.cloudfront.net/auth |
+|  **Key:**   CognitoClientId <br>  **Description:**  Cognito client ID <br>  **Value:**  \<cognito client ID\> |  
+|  **Key:**   CognitoDomain <br>  **Description:**  Cogntio Domain <br>  **Value:**  \<cognito client domain\> |  
 
 
 
