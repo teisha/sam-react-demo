@@ -15,7 +15,6 @@ process.env.STAGE = "dev";
 
 container
   .register(Env, { useClass: Env })
-  .register(DynamoDBClient, { useClass: DynamoDBClient })
   .register(UserDynamoSchema, { useClass: UserDynamoSchema })
   .register(UserHandler, { useClass: UserHandler });
 

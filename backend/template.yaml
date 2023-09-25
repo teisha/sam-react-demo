@@ -21,9 +21,12 @@ Globals:
     CodeUri: .
     Environment:
       Variables:
+        STAGE: !Ref Environment
         LOGGING_LEVEL: "INFO"
         DYNAMO_TABLE:
           Ref: DataTable
+        CORS_ORIGIN:
+          !Sub "${ClientCloudFrontDistro.DomainName}"
 Resources:
   DataTable:
     Type: "AWS::DynamoDB::Table"
@@ -55,6 +58,9 @@ Resources:
           Projection:
             ProjectionType: ALL
 
+  ###
+  ### Backend Lambdas
+  ###
   Api:
     Type: AWS::Serverless::Api
     Properties:
@@ -90,37 +96,12 @@ Resources:
           ResponseParameters:
             Headers:
               Access-Control-Allow-Origin: "'*'"
-
       Auth:
         DefaultAuthorizer: CognitoAuth
         Authorizers:
           CognitoAuth:
-            UserPoolArn: !GetAtt CognitoUserPool.Arn
+            UserPoolArn: !GetAtt CognitoUserPool.Arn  
         AddDefaultAuthorizerToCorsPreflight: False
-
-  # GetUserData:
-  #   Type: "AWS::Serverless::Function"
-  #   Properties:
-  #     Handler: index.getUserHandler
-  #     Runtime: nodejs18.x
-  #     Policies:
-  #       - Version: "2012-10-17"
-  #         Statement:
-  #           - Effect: Allow
-  #             Action:
-  #               - "dynamodb:Query"
-  #               - "dynamodb:GetItem"
-  #             Resource:
-  #               - "Fn::GetAtt":
-  #                   - DataTable
-  #                   - Arn
-  #               - "Fn::Join":
-  #                   - /
-  #                   - - "Fn::GetAtt":
-  #                         - DataTable
-  #                         - Arn
-  #                     - index
-  #                     - startIndex
 
   UserApiHandler:
     Type: "AWS::Serverless::Function"
@@ -165,7 +146,6 @@ Resources:
   ###
   ###  Security
   ###
-
   CognitoUserPool:
     Type: "AWS::Cognito::UserPool"
     Properties:
@@ -200,33 +180,53 @@ Resources:
     Properties:
       Domain: !Sub ${ProjectName}
       UserPoolId: !Ref CognitoUserPool
+
+  ###
+  ###  Application Hosting    
+  ### 
   ClientHostBucket:
     Type: "AWS::S3::Bucket"
     Properties:
-      WebsiteConfiguration:
-        IndexDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls : true
+        BlockPublicPolicy : true
+        IgnorePublicAcls : true
+        RestrictPublicBuckets : true
+  ClientHostLoggingBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls : true
+        BlockPublicPolicy : true
+        IgnorePublicAcls : true
+        RestrictPublicBuckets : true 
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
+    DeletionPolicy: Delete       
   ClientBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket:
         Ref: ClientHostBucket
       PolicyDocument:
+        Id: AllowCloudFrontAccess
         Statement:
           - Action:
-              - "s3:GetObject"
+              - "s3:GetObject*"
             Effect: "Allow"
-            Resource:
-              Fn::Join:
-                - ""
-                - - "arn:aws:s3:::"
-                  - Ref: ClientHostBucket
-                  - "/*"
+            Resource: !Sub ${ClientHostBucket.Arn}/*
             Principal:
-              AWS:
-                Fn::Join:
-                  - ""
-                  - - "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity "
-                    - Ref: ClientOID
+              Service: "cloudfront.amazonaws.com"
+            Condition:
+              StringEquals:
+                AWS:SourceArn:
+                  Fn::Join:
+                    - ""
+                    - - "arn:aws:cloudfront::"
+                      - Ref: AWS::AccountId
+                      - ":distribution/"
+                      - Ref: ClientCloudFrontDistro
   # Front End server
   ClientCloudFrontDistro:
     Type: AWS::CloudFront::Distribution
@@ -243,31 +243,39 @@ Resources:
           ForwardedValues:
             QueryString: "true"
           TargetOriginId: !Sub ${ProjectName}-origin-dist
+          #Managed Origin Request Policies
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03 # SecurityHeadersPolicy
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: "true"
         Origins:
-          - DomainName:
-              Fn::Join:
-                - ""
-                - - Ref: ClientHostBucket
-                  - ".s3"
-                  - ".amazonaws.com"
+          - DomainName: !GetAtt ClientHostBucket.RegionalDomainName
             Id: !Sub ${ProjectName}-origin-dist
             S3OriginConfig:
-              OriginAccessIdentity:
-                Fn::Join:
-                  - ""
-                  - - "origin-access-identity/cloudfront/"
-                    - Ref: ClientOID
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !GetAtt ClientOAC.Id
         ViewerCertificate:
           CloudFrontDefaultCertificate: "true"
-  ClientOID:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: "Origin Access ID for front end"
+        Logging:
+          Bucket: !GetAtt ClientHostLoggingBucket.RegionalDomainName
+          Prefix: 'cloudfront-access-logs'          
+  ClientOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    DependsOn:
+      - ClientHostBucket
+    Properties: 
+      OriginAccessControlConfig:
+        Description: S3 Origin Access Control For CloudFront
+        Name: !Ref AWS::StackName
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
 
+###
+### Output config values needed
+###
 Outputs:
   CogntioRedirectUri:
     Description: Redirect URI to front end from Cognito User Pool

@@ -32,6 +32,7 @@ const Auth: React.FC<{}> = ()  => {
         let [baseurl, ...rest] = window.location.href.split('#')
         const router_query = rest.join('#').split('&')
         let id_token: string = router_query[0].split('=')[1] as string
+        const state: string = router_query.find(rec => rec.includes('state='))?.split('=')[1] as string 
         if (!id_token) {
             id_token = cognito.getAuthToken() ?? ""
         }
@@ -44,7 +45,8 @@ const Auth: React.FC<{}> = ()  => {
             (async (): Promise<void> => {
                 const token = cognito.parseIdToken(id_token);
                 if (
-                  cognito.validateToken(id_token) &&
+                  //should also validate state from URL
+                  cognito.validateToken(id_token, state, appContext.config.cognitoConfig.cognito_state) &&
                   !token.is_expired
                 ) {
                   cognito.setAuthToken(id_token); //sets in localstorage

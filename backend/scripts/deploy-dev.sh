@@ -1,6 +1,6 @@
 set -e
 
-PROFILE=lsoft  # profile for target instance
+PROFILE=lsoft  # profile for sandbox instance
 REGION=us-east-1
 
 # Must be created manually
@@ -13,7 +13,6 @@ ENVIRONMENT="dev"
 STACK_NAME="$APPLICATION-$PROJECT-$ENVIRONMENT"
 TEMPLATE="template.yaml"
 DEPLOY_CUSTOM_HANDLER="false"
-
 # Build 
 echo "Building Serverless React Demo project with SAM"
 
@@ -45,6 +44,7 @@ sam build --template $TEMPLATE \
   --profile $PROFILE
 
 
+
 # Error message
 # aws sns publish --topic-arn arn:aws:sns:us-east-1:001668627821:sam-disco-infra-experiment-dev --message "Hello World"
 # aws sns publish --topic-arn arn:aws:sns:us-east-1:001668627821:sam-disco-infra-experiment-dev --message "I DEMAND TO SEE THE DEAD LETTER QUEUE"
@@ -60,6 +60,7 @@ sam build --template $TEMPLATE \
 #   FrontEndUrl=${APP_URL} --profile ${PROFILE}
 
 
+echo "./scripts/deploy-react.sh $PROFILE $REGION $STACK_NAME"
 ./scripts/deploy-react.sh $PROFILE $REGION $STACK_NAME
 # outputs=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --output json --query 'Stacks[0].Outputs')
 # echo $outputs > './outputs.json'

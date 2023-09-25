@@ -15,31 +15,31 @@ export class UserHandler extends BaseHandler {
   async handleEvent(
     event: APIGatewayProxyEvent
   ): Promise<APIGatewayProxyResult> {
-    const { resource, httpMethod } = event;
+    const { resource, httpMethod, headers } = event;
     console.log({ event });
     if (httpMethod === "GET") {
-      return this.getUser(event.pathParameters?.username);
+      return this.getUser(headers.origin ?? "", event.pathParameters?.username);
     } else if (httpMethod === "POST") {
-      return this.saveUser(event.body);
+      return this.saveUser(headers.origin ?? "", event.body);
     }
-    return this.handleError(300, "Cannot determine action.");
+    return this.handleError(origin, 300, "Cannot determine action.");
   }
 
-  async getUser(username: string | undefined): Promise<APIGatewayProxyResult> {
+  async getUser(origin: string, username: string | undefined): Promise<APIGatewayProxyResult> {
     try {
       if (!username) {
         throw new Error("username is required");
       }
       const user: UserType = (await this.schema.get(username)) as UserType;
 
-      return this.handleReturn(JSON.stringify(user));
+      return this.handleReturn(origin, JSON.stringify(user));
     } catch (error) {
       console.log(`Username not processed: ${username}`, { error });
-      return this.handleError(400, (error as Error).message);
+      return this.handleError(origin, 400, (error as Error).message);
     }
   }
 
-  async saveUser(body: string | null): Promise<APIGatewayProxyResult> {
+  async saveUser(origin: string, body: string | null): Promise<APIGatewayProxyResult> {
     try {
       if (!body) {
         throw new Error("body is required");
@@ -52,10 +52,10 @@ export class UserHandler extends BaseHandler {
       const response = await this.schema.put(userData);
       console.log({ response });
 
-      return this.handleReturn(`User saved: {${userData.username}}`);
+      return this.handleReturn(origin, `User saved: {${userData.username}}`);
     } catch (error) {
       console.log(`User data could not be processed: ${body}`, { error });
-      return this.handleError(400, (error as Error).message);
+      return this.handleError(origin, 400, (error as Error).message);
     }
   }
 }

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:dev": "npm run build && cp config/dev_config.json dist",
+    "build:dev": "npm run build && cp config/dev_config.json dist/config.json",
     "build": "rm -rf dist && esbuild src/index.tsx --bundle --minify --sourcemap --outfile=dist/bundle.js && cp -R public/** dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx servor ./dist/ index.html 4000 --reload"
@@ -30,6 +30,7 @@
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.5",
     "axios": "^1.4.0",
+    "buffer": "^6.0.3",
     "jwt-decode": "^3.1.2",
     "react-hook-form": "^7.45.4",
     "zod": "^3.22.2"

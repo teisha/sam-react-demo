@@ -7,7 +7,7 @@
     "test": "DEPLOYMENT_ENV=dev jest",
     "build": "node esbuild",
     "deploy:dev": "./scripts/deploy-dev.sh",
-    "deploy:dev:frontend": "./scripts/deploy-react.sh lsoft us-east-1 serverless-react-dev"
+    "deploy:dev:frontend": "./scripts/deploy-react.sh eds-sandbox us-east-1 serverless-tdb-app-dev"
   },
   "keywords": [],
   "author": "",
