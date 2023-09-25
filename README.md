@@ -3,9 +3,7 @@
 
 An overview of the Demo React Serverless Application here: 
 
-<https://github.com/teisha2U/serverless-react>
-
-LucidChart: <https://lucid.app/lucidchart/5d46efd7-3464-4e98-a93f-aff6ce9fc02c/edit?invitationId=inv_50be9c54-dfd2-4362-b8e4-7e6fa6c94a7c&page=0_0#>
+<https://github.com/teisha/sam-react-demo>
 
 ****
 
@@ -84,30 +82,21 @@ The CallbackURL in the CognitoUserClient enforces CORS between the application h
 
 As an alternative to using redirects, AWS offers some javascript packages through its AWS Amplify libraries that can be added to the React application to authenticate with Cognito.
 
-<small>https\://serverless-tdb-app-dev.auth.us-east-1.amazoncognito.com/login?response\_type=token\&client\_id=4bs30hobrn4ibavor2hlnukkmm\&redirect\_uri=https\://d3qltyqjywyc9d.cloudfront.net/auth\&state=Is%20the%20cognito%20set%20up</small>
 
 |  React App Login Page |   Cognito Login Page |
 |  -------------------- |  ------------------- |
 | ![react](./docs/images/AppLoginPage.png) | ![cognito](./docs/images/CognitoLoginPage.png) |
 
 
-This is the URL redirecting to Cognito in the example above:
-
-https\://serverless-tdb-app-dev.auth.us-east-1.amazoncognito.com/login?  
-response\_type=token&  
-client\_id=4bs30hobrn4ibavor2hlnukkmm&  
-redirect\_uri=<https://d3qltyqjywyc9d.cloudfront.net/auth&>  
-state=Is%20the%20cognito%20set%20up  
-
-These values are taken from the output of the CloudFormation stack when the template is run
+These values for the URL redirecting to Cognito in the example above are taken from the output of the CloudFormation stack when the template is run
 
 
 
 |  Outputs  |
 | --------------------------------------------------|
-| **Key:**  CognitoRedirectUri   <br>  **Description:** Redirect URI to front end from Cognito User Pool  <br>  **Value:**  https\://d3qltyqjywyc9d.cloudfront.net/auth |
-|  **Key:**   CognitoClientId <br>  **Description:**  Cognito client ID <br>  **Value:**  4bs30hobrn4ibavor2hlnukkmm |  
-|  **Key:**   CognitoDomain <br>  **Description:**  Cogntio Domain <br>  **Value:**  serverless-tdb-app-dev |  
+| **Key:**  CognitoRedirectUri   <br>  **Description:** Redirect URI to front end from Cognito User Pool  <br>  **Value:**  https\://<domain>.cloudfront.net/auth |
+|  **Key:**   CognitoClientId <br>  **Description:**  Cognito client ID <br>  **Value:**  <cognito client ID> |  
+|  **Key:**   CognitoDomain <br>  **Description:**  Cogntio Domain <br>  **Value:**  <cognito client domain> |  
 
 
 
