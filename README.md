@@ -127,8 +127,6 @@ Once the Identity Provider exists, it can be added to the Cognito User Pool as a
 
 Unfortunately, this is not going to get the user to the application, so another OneLogin application tile is needed to point to the Index.html of the application.  It means that the users get two tiles on their OneLogin page, but only one of them is pointing to the actual application.
 
-You can see this is what was done to add our AWS Access through OneLogin.![](./docs/images/OneLoginAWSTiles.png)
-
 This is a really nice diagram of how OneLogin works with Cognito, other AWS services and Web Applications.  It was taken from an older [write-up of integrating Cognito and AWS](https://medium.com/@anjanava.biswas/aws-cognito-user-pool-federation-with-onelogin-idp-4b1962127b0b) that’s still relevant, but the screenshots of the Cognito console look different now.
 
 ![](./docs/images/onelogin-to-cognito.webp)
