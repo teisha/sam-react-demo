@@ -85,7 +85,7 @@ As an alternative to using redirects, AWS offers some javascript packages throug
 
 |  React App Login Page |   Cognito Login Page |
 |  -------------------- |  ------------------- |
-| ![react](./docs/images/AppLoginPage.png) | ![cognito](./docs/images/CognitoLoginPage.png) |
+| ![react]() | ![cognito](./docs/images/CognitoLoginPage.png) |
 
 
 These values for the URL redirecting to Cognito in the example above are taken from the output of the CloudFormation stack when the template is run
@@ -110,9 +110,7 @@ There are [instructions online from AWS](https://repost.aws/knowledge-center/cog
 
 Once the Identity Provider exists, it can be added to the Cognito User Pool as a SAML Identity Provider, which will hook the authentication from OneLogin into the Cognito client.  It will also create a tile on the users’ OneLogin page.
 
-|  UserPool - Add FederatedId |   Add SAML Identity Provider |
-|  -------------------- |  ------------------- |
-| ![userpool](./docs/images/AddFederatedIdP.png) | ![saml](./docs/images/AddSAMLToUserPool.png) |
+
 
 Unfortunately, this is not going to get the user to the application, so another OneLogin application tile is needed to point to the Index.html of the application.  It means that the users get two tiles on their OneLogin page, but only one of them is pointing to the actual application.
 
